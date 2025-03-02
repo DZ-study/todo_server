@@ -15,7 +15,7 @@ router(app)
 
 app.listen(PORT, () => {
   try {
-    sequelize.authenticate()
+    // sequelize.authenticate()
     console.log('数据库连接成功，请访问http://localhost:3000');
   } catch (error) {
     console.log('数据库连接失败', error);

@@ -2,7 +2,7 @@
  * 任务的标签管理
  */
 
-module.exports = sequelize => sequelize.define('Tag', {
+module.exports = (sequelize, DataTypes) => sequelize.define('Tag', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -10,12 +10,14 @@ module.exports = sequelize => sequelize.define('Tag', {
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   color: {
     type: DataTypes.STRING,
     allowNull: true
   }
 }, {
-  tableName: 'tags'
+  tableName: 'tags',
+  timestamps: false
 })

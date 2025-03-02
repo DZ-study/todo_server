@@ -1,4 +1,3 @@
-const mysql = require('mysql2')
 const dotenv = require('dotenv')
 const { Sequelize } = require('sequelize')
 
@@ -20,7 +19,6 @@ const sequelize = new Sequelize(connConf.database,
         logging: console.log,
       })
 
-// const pool = mysql.createPool(connConf).promise()
 
 // 验证是否连接成功
 sequelize.authenticate()

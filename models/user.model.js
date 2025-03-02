@@ -1,6 +1,4 @@
-const { Sequelize } = require('sequelize')
-
-module.exports = sequelize => {
+module.exports = (sequelize, DataTypes) => {
   return sequelize.define('user', {
     id: {
       type: DataTypes.STRING,
@@ -28,15 +26,15 @@ module.exports = sequelize => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    createAt: {
-      type: DataTypes.DATE,
+    createAt: { 
+      type: DataTypes.STRING, // 使用时间戳（秒）
       allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: () => Date.now().toString()
     },
-    updateAt: {
-      type: DataTypes.DATE,
+    updateAt: { 
+      type: DataTypes.STRING, 
       allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+      defaultValue: () => Date.now().toString()
     }
   }, {
     tableName: 'users',

@@ -11,6 +11,7 @@ User.hasMany(Task, { foreignKey: 'userId', onDelete: 'CASCADE' })
 User.hasMany(Tag, { foreignKey: 'userId', onDelete: 'CASCADE' })
 Task.belongsTo(User, { foreignKey: 'userId' })
 Tag.belongsTo(User, { foreignKey: 'userId' })
+// 自动创建关联表
 Task.belongsToMany(Tag, { through: 'TaskTag' })
 Tag.belongsToMany(Task, { through: 'TaskTag' })
 

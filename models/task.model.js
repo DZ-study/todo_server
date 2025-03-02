@@ -1,10 +1,7 @@
 /**
  * 任务管理
  */
-const { Sequelize, DataTypes } = require('sequelize')
-const sequelize = require('../config/db')
-
-module.exports = sequelize => sequelize.define('Task', {
+module.exports = (sequelize, DataTypes) => sequelize.define('Task', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -28,23 +25,26 @@ module.exports = sequelize => sequelize.define('Task', {
     defaultValue: 1
   },
   startTime: {
-    type: DataTypes.TIME,
+    type: DataTypes.STRING,
     allowNull: true
   },
   endTime: {
     type: DataTypes.TIME,
     allowNull: true
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+  createAt: { 
+    type: DataTypes.STRING, // 使用时间戳（秒）
+    allowNull: false,
+    defaultValue: () => Date.now().toString()
   },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+  updateAt: { 
+    type: DataTypes.STRING, 
+    allowNull: false,
+    defaultValue: () => Date.now().toString()
   }
 }, {
-  tableName: 'tasks'
+  tableName: 'tasks',
+  timestamps: false
 })
 
 
