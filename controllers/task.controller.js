@@ -1,10 +1,12 @@
 const { Op } = require('sequelize')
 const { Task, Tag } = require('../models/index')
 const sequelize = require('../config/db')
+const { getIdByToken } = require('../utils/token')
+const AppError = require('../utils/AppError')
 
 module.exports = {
   // 创建任务
-  createTask: async (req, res) => {
+  createTask: async (req, res, next) => {
     const { task, userId } = req.body
     const taskObj = {
       userId,
@@ -22,11 +24,9 @@ module.exports = {
       // 创建无标签的任务
       try {
         await Task.create(taskObj)
-        res.status(201).json({ status: 201, message: '创建任务成功' })
+        return res.status(201).json({ status: 201, message: '创建任务成功' })
       } catch (err) {
-        res
-          .status(500)
-          .json({ status: 500, message: '创建任务失败', error: err })
+        next(err)
       }
     } else {
       sequelize
@@ -47,17 +47,10 @@ module.exports = {
           await task.addTags(tagIds, { transaction: t })
         })
         .then(() => {
-          res.status(201).json({ status: 201, message: '创建任务成功' })
+          return res.status(201).json({ status: 201, message: '创建任务成功' })
         })
         .catch((err) => {
-          console.error('事务错误:', err)
-          res
-            .status(500)
-            .json({
-              status: 500,
-              message: '创建任务失败',
-              error: JSON.stringify(err)
-            })
+          next(err)
         })
     }
   },
@@ -69,21 +62,42 @@ module.exports = {
     try {
       const task = await Task.findOne({ where: { id } })
       if (!task) {
-        res.status(404).json({ status: 404, message: '任务不存在' })
+        throw new Error('任务不存在', 404)
       }
       Object.assign(task, fields)
       await task.save()
-      res.status(200).json({ status: 200, message: '更新任务成功', task })
+      return res
+        .status(200)
+        .json({ status: 200, message: '更新任务成功', task })
     } catch (err) {
-      console.error('更新任务失败:', err)
-
-      res
-        .status(500)
-        .json({
-          status: 500,
-          message: '更新任务失败',
-          error: JSON.stringify(err)
-        })
+      next(err)
+    }
+  },
+  // 查询用户的任务列表
+  getTaskList: async (req, res, next) => {
+    const userId = getIdByToken(req.header('Authorization'))
+    if (!userId) {
+      throw new Error('用户未登录', 401)
+    }
+    try {
+      const tasks = await Task.findAll({ where: { userId } })
+      return res
+        .status(200)
+        .json({ status: 200, message: '查询任务列表成功', tasks })
+    } catch (err) {
+      next(err)
+    }
+  },
+  // 查询用户指定标签的任务列表
+  getTaskListByTag: async (req, res, next) => {
+    try {
+      const { tag } = req.query
+      const userId = getIdByToken(req.header('Authorization'))
+      if (!userId) {
+        throw new AppError('用户未登录', 401)
+      }
+    } catch (err) {
+      next(err)
     }
   }
 }
