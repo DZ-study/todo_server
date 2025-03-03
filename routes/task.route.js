@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 
-const taskController = require('../controllers/task.controller')
+const taskController = require('@/controllers/task.controller')
 
 // 创建任务
 router.post('/add', taskController.createTask)

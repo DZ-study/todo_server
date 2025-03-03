@@ -1,8 +1,8 @@
 const { Op } = require('sequelize')
-const { Task, Tag } = require('../models/index')
-const sequelize = require('../config/db')
-const { getIdByToken } = require('../utils/token')
-const AppError = require('../utils/AppError')
+const { Task, Tag } = require('@/models/index')
+const sequelize = require('@/config/db')
+const { getIdByToken } = require('@/utils/token')
+const AppError = require('@/utils/AppError')
 
 module.exports = {
   // 创建任务

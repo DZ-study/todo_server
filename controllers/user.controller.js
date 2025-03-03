@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs')
 const { v4: uuidv4 } = require('uuid')
-const { generateToken, getIdByToken } = require('../utils/token')
-const { getOpenId } = require('../utils/wechat')
-const AppError = require('../utils/AppError')
+const { generateToken, getIdByToken } = require('@/utils/token')
+const { getOpenId } = require('@/utils/wechat')
+const AppError = require('@/utils/AppError')
 
-const { User } = require('../models/index')
+const { User } = require('@/models/index')
 
 module.exports = {
   register: async (req, res, next) => {

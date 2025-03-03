@@ -4,6 +4,8 @@ const sequelize = require('./config/db')
 const authMiddleware = require('./middleware/auth.middleware')
 const errorHandler = require('./middleware/error.middleware')
 
+require('module-alias/register')
+
 const PORT = 3000
 
 const router = require('./routes')

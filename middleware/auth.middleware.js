@@ -3,6 +3,7 @@
  */
 const jwt = require('jsonwebtoken')
 
+// 接口白名单，不需要token认证
 const whitelist = ['/api/users/register', '/api/users/login']
 
 const authMiddleware = (req, res, next) => {
