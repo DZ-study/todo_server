@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken')
 const whitelist = ['/api/users/register', '/api/users/login']
 
 const authMiddleware = (req, res, next) => {
-
   console.log(req.path)
 
   if (whitelist.includes(req.path)) {
@@ -14,7 +13,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   const token = req.header('Authorization')
-  
+
   if (!token) {
     return res.status(401).json({ status: 401, message: '未授权' })
   }

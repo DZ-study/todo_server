@@ -16,11 +16,14 @@ Task.belongsToMany(Tag, { through: 'TaskTag' })
 Tag.belongsToMany(Task, { through: 'TaskTag' })
 
 // 统一同步所有表
-sequelize.sync({ alter: true }).then(() => {
-  console.log('所有表已同步');
-}).catch(err => {
-  console.error('数据库同步失败:', err);
-})
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log('所有表已同步')
+  })
+  .catch((err) => {
+    console.error('数据库同步失败:', err)
+  })
 
 module.exports = {
   User,

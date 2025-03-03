@@ -9,8 +9,8 @@ const getOpenId = async (code) => {
     throw new Error('请先配置微信小程序的appId和appSecret')
   }
   const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${WECHAT_APPID}&secret=${WECHAT_SECRET}&grant_type=authorization_code`
-  const response = await axios.get(url);
-  return response.data;
+  const response = await axios.get(url)
+  return response.data
 }
 
 /**
@@ -20,7 +20,7 @@ const getOpenId = async (code) => {
  */
 // app.get('/wechat', (req, res) => {
 //   console.log(111);
-  
+
 //   const { signature, timestamp, nonce, echostr } = req.query;
 //   console.log(signature, timestamp, nonce, echostr);
 
