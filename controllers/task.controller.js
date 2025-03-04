@@ -62,7 +62,7 @@ module.exports = {
     try {
       const task = await Task.findOne({ where: { id } })
       if (!task) {
-        throw new Error('任务不存在', 404)
+        throw new AppError('任务不存在', 404)
       }
       Object.assign(task, fields)
       await task.save()
@@ -76,7 +76,7 @@ module.exports = {
     try {
       const userId = getIdByToken(req.header('Authorization'))
       if (!userId) {
-        throw new Error('用户未登录', 401)
+        throw new AppError('用户未登录', 401)
       }
 
       const { tag, startTime, priority, status, orderBy = 'createAt', order = 'DESC' } = req.query
@@ -91,7 +91,7 @@ module.exports = {
         whereCond.startTime = { [Op.gte]: startTime }
       }
 
-      const tasks = await Task.findAll({
+      const tasks = await Task.findAndCountAll({
         attributes: ['id', 'title', 'priority', 'status', 'startTime'],
         where: whereCond,
         include: tag
