@@ -14,7 +14,7 @@ module.exports = {
       description: task.description,
       status: task.status || 1,
       priority: task.priority || 1,
-      startTime: task.startTime
+      startTime: Math.floor(task.startTime / 1000).toString()
     }
     const { tags } = task
     if (task.endTime) {
@@ -30,12 +30,12 @@ module.exports = {
       }
     } else {
       sequelize
-        .transaction(async (t) => {
+        .transaction(async t => {
           // 自动管理事务，不需要手动提交/回滚
           const task = await Task.create(taskObj, { transaction: t })
           // bulkCreate 批量插入标签
           await Tag.bulkCreate(
-            tags.map((o) => ({ name: o, userId })),
+            tags.map(o => ({ name: o, userId })),
             { ignoreDuplicates: true, transaction: t }
           )
           const tagIds = await Tag.findAll({
@@ -49,12 +49,12 @@ module.exports = {
         .then(() => {
           return res.status(201).json({ status: 201, message: '创建任务成功' })
         })
-        .catch((err) => {
+        .catch(err => {
           next(err)
         })
     }
   },
-  // 更新任务
+  // 更新任务 TODO:未测试
   // update()直接更新数据库的字段
   // findOne + save先查找实例，再更新字段
   updateTask: async (req, res) => {
@@ -66,36 +66,55 @@ module.exports = {
       }
       Object.assign(task, fields)
       await task.save()
-      return res
-        .status(200)
-        .json({ status: 200, message: '更新任务成功', task })
+      return res.status(200).json({ status: 200, message: '更新任务成功', task })
     } catch (err) {
       next(err)
     }
   },
   // 查询用户的任务列表
   getTaskList: async (req, res, next) => {
-    const userId = getIdByToken(req.header('Authorization'))
-    if (!userId) {
-      throw new Error('用户未登录', 401)
-    }
     try {
-      const tasks = await Task.findAll({ where: { userId } })
-      return res
-        .status(200)
-        .json({ status: 200, message: '查询任务列表成功', tasks })
+      const userId = getIdByToken(req.header('Authorization'))
+      if (!userId) {
+        throw new Error('用户未登录', 401)
+      }
+
+      const { tag, startTime, priority, status, orderBy = 'createAt', order = 'DESC' } = req.query
+      const whereCond = { userId }
+      if (priority) {
+        whereCond.priority = priority
+      }
+      if (status) {
+        whereCond.status = status
+      }
+      if (startTime) {
+        whereCond.startTime = { [Op.gte]: startTime }
+      }
+
+      const tasks = await Task.findAll({
+        attributes: ['id', 'title', 'priority', 'status', 'startTime'],
+        where: whereCond,
+        include: tag
+          ? {
+              model: Tag,
+              as: 'tags',
+              where: { name: tag },
+              require: true
+            }
+          : { model: Tag, as: 'tags' },
+        order: [[orderBy, order]]
+      })
+      return res.status(200).json({ status: 200, message: '查询任务列表成功', tasks })
     } catch (err) {
       next(err)
     }
   },
-  // 查询用户指定标签的任务列表
-  getTaskListByTag: async (req, res, next) => {
+  // 删除任务
+  deleteTask: async (req, res, next) => {
     try {
-      const { tag } = req.query
-      const userId = getIdByToken(req.header('Authorization'))
-      if (!userId) {
-        throw new AppError('用户未登录', 401)
-      }
+      const { ids } = req.body
+      await Task.destroy({ where: { id: ids } })
+      return res.status(200).json({ status: 200, message: '删除任务成功' })
     } catch (err) {
       next(err)
     }

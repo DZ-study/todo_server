@@ -1,9 +1,9 @@
 const AppError = require('../utils/AppError')
 
-const handleSequelizeError = (err) => {
+const handleSequelizeError = err => {
   // 处理 Sequelize 特有错误
   if (err.name === 'SequelizeValidationError') {
-    const messages = err.errors.map((e) => e.message)
+    const messages = err.errors.map(e => e.message)
     return new AppError(messages.join('; '), 400)
   }
   if (err.name === 'SequelizeUniqueConstraintError') {

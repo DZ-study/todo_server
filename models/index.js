@@ -12,16 +12,16 @@ User.hasMany(Tag, { foreignKey: 'userId', onDelete: 'CASCADE' })
 Task.belongsTo(User, { foreignKey: 'userId' })
 Tag.belongsTo(User, { foreignKey: 'userId' })
 // 自动创建关联表
-Task.belongsToMany(Tag, { through: 'TaskTag' })
-Tag.belongsToMany(Task, { through: 'TaskTag' })
+Task.belongsToMany(Tag, { through: 'TaskTag', as: 'tags' })
+Tag.belongsToMany(Task, { through: 'TaskTag', as: 'tasks' })
 
 // 统一同步所有表
 sequelize
-  .sync({ alter: true })
+  .sync({ alter: false })
   .then(() => {
     console.log('所有表已同步')
   })
-  .catch((err) => {
+  .catch(err => {
     console.error('数据库同步失败:', err)
   })
 

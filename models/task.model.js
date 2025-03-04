@@ -19,10 +19,12 @@ module.exports = (sequelize, DataTypes) =>
         allowNull: true
       },
       status: {
+        // 1-未开始 2-进行中 3-已完成 4-已放弃 5-已过期 6-已删除
         type: DataTypes.INTEGER,
         allowNull: false
       },
       priority: {
+        // 1-无 2-低 3-中 4-高
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1
