@@ -5,12 +5,14 @@ const sequelize = require('../config/db')
 const User = require('./user.model')(sequelize, DataTypes)
 const Task = require('./task.model')(sequelize, DataTypes)
 const Tag = require('./tag.model')(sequelize, DataTypes)
+const Setting = require('./setting.model')(sequelize, DataTypes)
 
 // 建立模型之间的关系
 User.hasMany(Task, { foreignKey: 'userId', onDelete: 'CASCADE' })
 User.hasMany(Tag, { foreignKey: 'userId', onDelete: 'CASCADE' })
 Task.belongsTo(User, { foreignKey: 'userId' })
 Tag.belongsTo(User, { foreignKey: 'userId' })
+Setting.belongsTo(User, { foreignKey: 'userId' })
 // 自动创建关联表
 Task.belongsToMany(Tag, { through: 'TaskTag', as: 'tags' })
 Tag.belongsToMany(Task, { through: 'TaskTag', as: 'tasks' })
@@ -28,5 +30,6 @@ sequelize
 module.exports = {
   User,
   Task,
-  Tag
+  Tag,
+  Setting
 }

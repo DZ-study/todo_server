@@ -4,7 +4,7 @@ const { generateToken, getIdByToken } = require('@/utils/token')
 const { getOpenId } = require('@/utils/wechat')
 const AppError = require('@/utils/AppError')
 
-const { User } = require('@/models/index')
+const { User, Setting } = require('@/models/index')
 
 module.exports = {
   register: async (req, res, next) => {
@@ -22,6 +22,8 @@ module.exports = {
       const userId = uuidv4()
       const hashedpassword = await bcrypt.hash(password, 10)
       await User.create({ id: userId, username, password: hashedpassword })
+      // 注册成功后生成默认的系统设置
+      await Setting.create({ userId })
       return res.status(201).json({ status: 201, message: req.t('registSuccess') })
     } catch (error) {
       next(error)
