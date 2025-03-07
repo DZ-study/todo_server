@@ -1,0 +1,19 @@
+{
+  "taskCreated": "Task created",
+  "loginSuccess": "Login successfully",
+  "tokenInvalid": "Token invalid",
+  "noToken": "No token",
+  "tagEmpty": "Tag cannot be empty",
+  "tagExist": "Tag already exists",
+  "created": "Created successfully",
+  "tagNotExist": "Tag does not exist",
+  "updated": "Updated successfully",
+  "deleted": "Deleted successfully",
+  "searchSuccess": "Search successfully",
+  "taskNotExist": "Task does not exist",
+  "passwordError": "Password error",
+  "userNotExist": "User does not exist",
+  "userOrPassEmpty": "User or password cannot be empty",
+  "userExist": "User already exists",
+  "registSuccess": "Register successfully"
+}

@@ -12,17 +12,17 @@ module.exports = {
       const { username, password } = req.body
 
       if (!username || !password) {
-        throw new AppError('用户名或密码不能为空', 400)
+        throw new AppError(req.t('userOrPassEmpty'), 400)
       }
 
       const user = await User.findOne({ where: { username } })
       if (user) {
-        throw new AppError('用户名已存在', 400)
+        throw new AppError(req.t('userExist'), 400)
       }
       const userId = uuidv4()
       const hashedpassword = await bcrypt.hash(password, 10)
       await User.create({ id: userId, username, password: hashedpassword })
-      return res.status(201).json({ status: 201, message: '注册成功' })
+      return res.status(201).json({ status: 201, message: req.t('registSuccess') })
     } catch (error) {
       next(error)
     }
@@ -31,19 +31,19 @@ module.exports = {
     const { username, password } = req.body
 
     if (!username || !password) {
-      throw new AppError('用户名或密码不能为空', 400)
+      throw new AppError(req.t('userOrPassEmpty'), 400)
     }
     try {
       const { dataValues: user } = await User.findOne({ where: { username } })
       if (!user) {
-        throw new AppError('用户不存在', 400)
+        throw new AppError(req.t('userNotExist'), 400)
       }
       const isMatch = await bcrypt.compare(password, user.password)
       if (!isMatch) {
-        throw new AppError('密码错误', 400)
+        throw new AppError(req.t('passwordError'), 400)
       }
       const token = generateToken(user)
-      res.json({ status: 200, message: '登录成功', token })
+      res.json({ status: 200, message: req.t('loginSuccess'), token })
     } catch (error) {
       next(error)
     }
@@ -52,8 +52,8 @@ module.exports = {
     const userId = getIdByToken(req.header('Authorization'))
     try {
       const [rows] = await User.findOne({ where: { id: userId } })
-      if (rows.length === 0) throw new AppError('用户不存在', 404)
-      res.status(200).json({ status: 200, message: '获取成功', data: rows[0] })
+      if (rows.length === 0) throw new AppError(req.t('userNotExist'), 404)
+      res.status(200).json({ status: 200, message: req.t('searchSuccess'), data: rows[0] })
     } catch (error) {
       next(error)
     }

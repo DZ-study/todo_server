@@ -9,14 +9,14 @@ module.exports = {
       const userId = getIdByToken(req.header('Authorization'))
       const { name, color = '#ff0000' } = req.body
       if (!name) {
-        throw new AppError('标签名称不能为空', 400)
+        throw new AppError(req.t('tagEmpty'), 400)
       }
       const tag = await Tag.findOne({ where: { name, userId } })
       if (tag) {
-        throw new AppError('标签已存在', 400)
+        throw new AppError(req.t('tagExist'), 400)
       }
       await Tag.create({ name, color, userId })
-      return res.status(200).json({ status: 200, message: '创建标签成功' })
+      return res.status(200).json({ status: 200, message: req.t('created') })
     } catch (err) {
       next(err)
     }
@@ -28,18 +28,18 @@ module.exports = {
       const { id } = req.params
       const { name, color } = req.body
       if (!name) {
-        throw new AppError('标签名称不能为空', 400)
+        throw new AppError(req.t('tagEmpty'), 400)
       }
       const tag = await Tag.findOne({ where: { id, userId } })
       if (!tag) {
-        throw new AppError('标签不存在', 400)
+        throw new AppError(req.t('tagNotExist'), 400)
       }
       tag.name = name
       if (color) {
         tag.color = color
       }
       await tag.save()
-      return res.status(200).json({ status: 200, message: '更新标签成功' })
+      return res.status(200).json({ status: 200, message: req.t('updated') })
     } catch (err) {
       next(err)
     }
@@ -51,10 +51,10 @@ module.exports = {
       const { id } = req.params
       const tag = await Tag.findOne({ where: { id, userId } })
       if (!tag) {
-        throw new AppError('标签不存在', 400)
+        throw new AppError(req.t('tagNotExist'), 400)
       }
       await tag.destroy()
-      return res.status(200).json({ status: 200, message: '删除标签成功' })
+      return res.status(200).json({ status: 200, message: req.t('deleted') })
     } catch (err) {
       next(err)
     }
@@ -64,10 +64,10 @@ module.exports = {
     try {
       const userId = getIdByToken(req.header('Authorization'))
       const tags = await Tag.findAndCountAll({ where: { userId } })
-      return res.status(200).json({ status: 200, message: '获取标签列表成功', tags })
+      return res.status(200).json({ status: 200, message: req.t('searchSuccess'), tags })
     } catch (err) {
       next(err)
     }
   }
-  // 获取标签详情
+  // TODO: 获取标签详情（标签详情只有两个字段，列表已全部返回，后期需要这个方法再补充
 }

@@ -14,14 +14,14 @@ const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1]
 
   if (!token) {
-    return res.status(401).json({ status: 401, message: '未授权' })
+    return res.status(401).json({ status: 401, message: req.t('noToken') })
   }
 
   try {
     req.user = jwt.verify(token, process.env.JWT_SECRET)
     next()
   } catch (error) {
-    res.status(403).json({ status: 403, message: 'Token无效' })
+    res.status(403).json({ status: 403, message: req.t('tokenInvalid') })
   }
 }
 

@@ -24,7 +24,7 @@ module.exports = {
       // 创建无标签的任务
       try {
         await Task.create(taskObj)
-        return res.status(201).json({ status: 201, message: '创建任务成功' })
+        return res.status(201).json({ status: 201, message: req.t('created') })
       } catch (err) {
         next(err)
       }
@@ -47,7 +47,7 @@ module.exports = {
           await task.addTags(tagIds, { transaction: t })
         })
         .then(() => {
-          return res.status(201).json({ status: 201, message: '创建任务成功' })
+          return res.status(201).json({ status: 201, message: req.t('created') })
         })
         .catch(err => {
           next(err)
@@ -62,11 +62,11 @@ module.exports = {
     try {
       const task = await Task.findOne({ where: { id } })
       if (!task) {
-        throw new AppError('任务不存在', 404)
+        throw new AppError(req.t('taskNotExist'), 404)
       }
       Object.assign(task, fields)
       await task.save()
-      return res.status(200).json({ status: 200, message: '更新任务成功', task })
+      return res.status(200).json({ status: 200, message: req.t('updated'), task })
     } catch (err) {
       next(err)
     }
@@ -76,7 +76,7 @@ module.exports = {
     try {
       const userId = getIdByToken(req.header('Authorization'))
       if (!userId) {
-        throw new AppError('用户未登录', 401)
+        throw new AppError(req.t('tokenInvalid'), 401)
       }
 
       const { tag, startTime, priority, status, orderBy = 'createAt', order = 'DESC' } = req.query
@@ -104,7 +104,7 @@ module.exports = {
           : { model: Tag, as: 'tags' },
         order: [[orderBy, order]]
       })
-      return res.status(200).json({ status: 200, message: '查询任务列表成功', tasks })
+      return res.status(200).json({ status: 200, message: req.t('searchSuccess'), tasks })
     } catch (err) {
       next(err)
     }
@@ -114,7 +114,7 @@ module.exports = {
     try {
       const { ids } = req.body
       await Task.destroy({ where: { id: ids } })
-      return res.status(200).json({ status: 200, message: '删除任务成功' })
+      return res.status(200).json({ status: 200, message: req.t('deleted') })
     } catch (err) {
       next(err)
     }
